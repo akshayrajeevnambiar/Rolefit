@@ -130,11 +130,20 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
-    # JSON only. Browsable API and authentication arrive with later PRs.
+    # JSON only. The browsable API stays off.
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
     ],
     "DEFAULT_PARSER_CLASSES": [
         "rest_framework.parsers.JSONParser",
+    ],
+    # New routes are private. The health view opts out with AllowAny.
+    # Basic auth is omitted: it would repeat the password on every call,
+    # and this server speaks plain HTTP.
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",
     ],
 }

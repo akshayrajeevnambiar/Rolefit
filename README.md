@@ -74,4 +74,4 @@ The design system lands at `design/tokens.css`. This branch does not require tha
 
 ## What is not here yet
 
-Models, auth, job-description APIs, the extraction pipeline, and deployment.
+Models, sign-in, job-description APIs, the extraction pipeline, and deployment. `GET /api/health/` is public. Any new API route requires an authenticated user unless it opts out, and HTTP Basic authentication is not enabled.
