@@ -8,8 +8,9 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-rolefit}
       POSTGRES_USER: ${POSTGRES_USER:-rolefit}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-rolefit}
+    # Host loopback only. Docker otherwise publishes these ports on every interface.
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./backend/docker/init-pgvector.sql:/docker-entrypoint-initdb.d/010-pgvector.sql:ro
@@ -34,10 +35,11 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-rolefit}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-rolefit}
       DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-dev-only-not-a-secret}
-      DJANGO_DEBUG: ${DJANGO_DEBUG:-true}
+      # Opt in by setting DJANGO_DEBUG=true in .env. Unset stays off.
+      DJANGO_DEBUG: ${DJANGO_DEBUG:-false}
       DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-localhost,127.0.0.1,backend}
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     depends_on:
       db:
         condition: service_healthy
@@ -61,7 +63,7 @@ services:
       # Browser calls stay on :5173. Vite forwards /api to the API container.
       VITE_API_PROXY_TARGET: http://backend:8000
     ports:
-      - "5173:5173"
+      - "127.0.0.1:5173:5173"
     depends_on:
       backend:
         condition: service_healthy

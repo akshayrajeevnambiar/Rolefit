@@ -19,7 +19,7 @@ cp .env.example .env
 docker compose up --build
 ```
 
-`.env` is optional. Compose uses the same placeholders when the file is missing. Do not put real secrets in either file.
+That file is how you turn debug on for this laptop. Compose leaves `DJANGO_DEBUG` off when it is unset, and it publishes Postgres, the API, and Vite on `127.0.0.1` only. Do not put real secrets in either file.
 
 Then open:
 
