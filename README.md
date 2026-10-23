@@ -42,11 +42,11 @@ source .venv/bin/activate
 pip install -r backend/requirements-dev.txt
 cd backend
 ruff check . && ruff format --check .
-python manage.py check
-pytest
+DJANGO_DEBUG=true python manage.py check
+DJANGO_DEBUG=true pytest
 ```
 
-`pytest` does not need Postgres. The health test never opens a database connection.
+`pytest` does not need Postgres. The health test never opens a database connection. `DJANGO_DEBUG=true` is required when `.env` is absent: with debug off, Django refuses the public dev secret. Copying `.env.example` sets the same flag.
 
 Frontend (Node.js 22):
 

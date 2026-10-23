@@ -7,6 +7,7 @@ See /.env.example for the local placeholders.
 import os
 from pathlib import Path
 
+from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -15,8 +16,34 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # variables win, which is what Docker Compose relies on.
 load_dotenv(BASE_DIR.parent / ".env")
 
-SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "dev-only-not-a-secret")
+# Public on purpose. It is in the repo, so it must not sign cookies
+# once debug is off.
+DEV_SECRET_KEY = "dev-only-not-a-secret"
+
+
+def resolve_secret_key(*, debug: bool, configured: str | None) -> str:
+    """Return the signing key, or refuse to boot.
+
+    The dev placeholder is allowed only while debug is on. Any other
+    mode must be given its own key, including when the placeholder is
+    still set in the environment.
+    """
+    secret = (configured or "").strip()
+    if debug:
+        return secret or DEV_SECRET_KEY
+    if not secret or secret == DEV_SECRET_KEY:
+        raise ImproperlyConfigured(
+            "DJANGO_SECRET_KEY must be a unique value when DJANGO_DEBUG "
+            "is not true. The dev placeholder is public."
+        )
+    return secret
+
+
 DEBUG = os.environ.get("DJANGO_DEBUG", "false").lower() in {"1", "true", "yes"}
+SECRET_KEY = resolve_secret_key(
+    debug=DEBUG,
+    configured=os.environ.get("DJANGO_SECRET_KEY"),
+)
 ALLOWED_HOSTS = [
     host.strip()
     for host in os.environ.get(

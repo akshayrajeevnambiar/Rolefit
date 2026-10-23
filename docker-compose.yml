@@ -34,7 +34,8 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-rolefit}
       POSTGRES_USER: ${POSTGRES_USER:-rolefit}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-rolefit}
-      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-dev-only-not-a-secret}
+      # Empty unless .env sets it. Settings rejects the dev placeholder when debug is off.
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-}
       # Opt in by setting DJANGO_DEBUG=true in .env. Unset stays off.
       DJANGO_DEBUG: ${DJANGO_DEBUG:-false}
       DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-localhost,127.0.0.1,backend}
