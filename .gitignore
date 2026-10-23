@@ -1,0 +1,25 @@
+# Local secrets. The committed template is .env.example.
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+.coverage
+htmlcov/
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# Editor and OS
+.DS_Store
+.idea/
+.vscode/
