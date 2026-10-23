@@ -5,7 +5,8 @@
 
   @import "../../design/tokens.css";
 
-  Vite is already allowed to read the parent directory. See vite.config.ts.
+  Vite is allowed to read this frontend directory and design/, not the
+  rest of the parent. See vite.config.ts.
   Rules below use those custom properties and fall back to system colors,
   so this file does not invent a second palette.
 */
