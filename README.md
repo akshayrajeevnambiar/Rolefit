@@ -1,1 +1,77 @@
-# Rolefit
+# RoleFit
+
+RoleFit will compare job descriptions with a résumé and show skill gaps. This repository is the scaffold only: a Django API, a React frontend, Postgres, and CI. There is no product behavior yet.
+
+## Stack
+
+- Python 3.12, Django 5.2, Django REST Framework
+- PostgreSQL 16 (`pgvector/pgvector`, extension enabled on first boot)
+- React, TypeScript, Vite
+- Docker Compose for local running
+- GitHub Actions for lint, tests, gitleaks, and dependency scans
+
+## Run locally
+
+Install Docker with Compose v2. From the repository root:
+
+```bash
+cp .env.example .env
+docker compose up --build
+```
+
+`.env` is optional. Compose uses the same placeholders when the file is missing. Do not put real secrets in either file.
+
+Then open:
+
+- Frontend: http://localhost:5173
+- API health check: http://localhost:8000/api/health/
+
+The health check returns `{"status": "ok"}`. It does not query the database. On startup the API container runs `manage.py migrate`, which creates Django's built-in tables in Postgres. This scaffold has no models of its own yet.
+
+Stop the stack with `docker compose down`. Add `-v` to delete the database volume.
+
+The Compose files start Django's development server and the Vite dev server. Production hosting is a later pull request.
+
+## Run checks without Docker
+
+Backend:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r backend/requirements-dev.txt
+cd backend
+ruff check . && ruff format --check .
+python manage.py check
+pytest
+```
+
+`pytest` does not need Postgres. The health test never opens a database connection.
+
+Frontend (Node.js 22):
+
+```bash
+cd frontend
+npm ci
+npm run lint
+npm run format:check
+npm test
+npm run build
+```
+
+Pre-commit runs the same lint tools plus gitleaks before each commit:
+
+```bash
+pip install pre-commit
+pre-commit install
+```
+
+The frontend hooks need `npm ci` inside `frontend/` first.
+
+## Design tokens
+
+The design system lands at `design/tokens.css`. This branch does not require that file. When it is on `main`, uncomment the `@import` at the top of `frontend/src/styles.css`. The page already reads those CSS variables and falls back to system colors until then.
+
+## What is not here yet
+
+Models, auth, job-description APIs, the extraction pipeline, and deployment.
