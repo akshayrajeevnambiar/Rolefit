@@ -1,6 +1,6 @@
 # RoleFit
 
-RoleFit will compare job descriptions with a résumé and show skill gaps. This repository is the scaffold only: a Django API, a React frontend, Postgres, and CI. There is no product behavior yet.
+RoleFit will compare job descriptions with a résumé and show skill gaps. This repository has the Django API, a React frontend, Postgres, and CI. You can register, sign in, and save a résumé or a job description. Nothing reads those texts for skills yet.
 
 ## Stack
 
@@ -26,7 +26,7 @@ Then open:
 - Frontend: http://localhost:5173
 - API health check: http://localhost:8000/api/health/
 
-The health check returns `{"status": "ok"}`. It does not query the database. On startup the API container runs `manage.py migrate`, which creates Django's built-in tables in Postgres. This scaffold has no models of its own yet.
+The health check returns `{"status": "ok"}`. It does not query the database. On startup the API container runs `manage.py migrate`, which creates the account, résumé, job description, and analysis tables in Postgres.
 
 Stop the stack with `docker compose down`. Add `-v` to delete the database volume.
 
@@ -46,7 +46,7 @@ DJANGO_DEBUG=true python manage.py check
 DJANGO_DEBUG=true pytest
 ```
 
-`pytest` does not need Postgres. The health test never opens a database connection. `DJANGO_DEBUG=true` is required when `.env` is absent: with debug off, Django refuses the public dev secret. Copying `.env.example` sets the same flag.
+`pytest` does not need Postgres. It uses `config/test_settings.py`, which points Django at SQLite in memory. `DJANGO_DEBUG=true` is required when `.env` is absent: with debug off, Django refuses the public dev secret and any secret shorter than 50 characters. Copying `.env.example` sets the debug flag.
 
 Frontend (Node.js 22):
 
@@ -74,6 +74,28 @@ The placeholder page imports `design/tokens.css`. That file is the Proof palette
 
 In the frontend image the app lives at `/app`, so the import `../../design/tokens.css` is the path `/design/tokens.css`. Compose mounts `design/` there, read-only.
 
+## API
+
+The browser talks to Vite, and Vite forwards `/api` to Django. Cookies stay on that one origin. There is no cross-origin setup.
+
+`GET /api/health/` is public. Every other route requires a signed-in account unless it opts out. HTTP Basic authentication is not enabled.
+
+| Method | Path | Who |
+|---|---|---|
+| GET | `/api/auth/csrf/` | Anyone. Sets the CSRF cookie. |
+| POST | `/api/auth/register/` | Anyone with that cookie. Creates the account and signs them in. |
+| POST | `/api/auth/login/` | Anyone with that cookie. |
+| POST | `/api/auth/logout/` | The signed-in account. |
+| GET | `/api/auth/me/` | The signed-in account. |
+| GET, POST | `/api/resumes/` | The signed-in account, only their rows. |
+| GET, PUT, PATCH, DELETE | `/api/resumes/<id>/` | The owner. Anyone else gets 404. |
+| GET, POST | `/api/job-descriptions/` | The signed-in account, only their rows. |
+| GET, PUT, PATCH, DELETE | `/api/job-descriptions/<id>/` | The owner. Anyone else gets 404. |
+
+Register and login take `{"email", "password"}` as JSON. Send the CSRF cookie back as the `X-CSRFToken` header on every call after the cookie exists, including `GET /api/auth/me/`. Login and logout replace the cookie, so the next call uses the new value. Register and login share a limit of 5 attempts a minute from the connection address. A client-supplied `X-Forwarded-For` does not get its own limit.
+
+An analysis row can link one résumé to one job description for that same account. There is no URL for it, and nothing fills it in.
+
 ## What is not here yet
 
-Models, sign-in, job-description APIs, the extraction pipeline, and deployment. `GET /api/health/` is public. Any new API route requires an authenticated user unless it opts out, and HTTP Basic authentication is not enabled.
+Skill extraction, gap results, and deployment. The screen is still the placeholder.

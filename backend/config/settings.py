@@ -73,6 +73,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "health",
+    "library",
 ]
 
 # Email is the sign-in field. Set before the first migration.
@@ -144,16 +145,14 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # The session cookie is the login. JavaScript cannot read it.
-# The CSRF cookie is readable so the browser can copy it into X-CSRFToken.
-# SameSite=Lax blocks it on a cross-site POST. Secure stays off because
-# this stack speaks plain HTTP on localhost. An HTTPS deploy must turn
-# both Secure flags on.
+# SameSite=Lax blocks it on a cross-site POST.
+# The CSRF cookie stays readable, which is Django's default, so the page
+# can copy it into X-CSRFToken. Secure stays off, also the default,
+# because this stack speaks plain HTTP on localhost. An HTTPS deploy
+# must set SESSION_COOKIE_SECURE and CSRF_COOKIE_SECURE.
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = "Lax"
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_HTTPONLY = False
 CSRF_COOKIE_SAMESITE = "Lax"
-CSRF_COOKIE_SECURE = False
 
 REST_FRAMEWORK = {
     # JSON only. The browsable API stays off.

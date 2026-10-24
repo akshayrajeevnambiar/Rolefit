@@ -14,4 +14,4 @@ select = ["E", "F", "I", "UP"]
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "config.test_settings"
 pythonpath = ["."]
-testpaths = ["health", "security", "accounts"]
+testpaths = ["health", "security", "accounts", "library"]
