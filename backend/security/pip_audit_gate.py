@@ -38,7 +38,9 @@ Fetcher = Callable[[str], dict | None]
 
 
 @dataclass(frozen=True)
-class BlockingFinding:
+class Finding:
+    """One vulnerability from the pip-audit report, with a severity label."""
+
     package: str
     version: str
     vuln_id: str
@@ -153,24 +155,31 @@ def _level_for_vuln(vuln: dict, fetch: Fetcher) -> str:
     return "UNKNOWN"
 
 
-def blocking_findings(report: dict, fetch: Fetcher) -> list[BlockingFinding]:
-    """Return findings that should fail the build."""
-    blocking: list[BlockingFinding] = []
+def classified_findings(report: dict, fetch: Fetcher) -> list[Finding]:
+    """Return every vulnerability with a severity label."""
+    found: list[Finding] = []
     for dependency in report.get("dependencies") or []:
         package = str(dependency.get("name") or "")
         version = str(dependency.get("version") or "")
         for vuln in dependency.get("vulns") or []:
-            level = _level_for_vuln(vuln, fetch)
-            if level in BLOCKING_LEVELS:
-                blocking.append(
-                    BlockingFinding(
-                        package=package,
-                        version=version,
-                        vuln_id=str(vuln.get("id") or ""),
-                        level=level,
-                    )
+            found.append(
+                Finding(
+                    package=package,
+                    version=version,
+                    vuln_id=str(vuln.get("id") or ""),
+                    level=_level_for_vuln(vuln, fetch),
                 )
-    return blocking
+            )
+    return found
+
+
+def blocking_findings(report: dict, fetch: Fetcher) -> list[Finding]:
+    """Return findings that should fail the build."""
+    return [
+        finding
+        for finding in classified_findings(report, fetch)
+        if finding.level in BLOCKING_LEVELS
+    ]
 
 
 def fetch_osv(vuln_id: str) -> dict | None:
@@ -218,10 +227,19 @@ def main(argv: list[str] | None = None) -> int:
         )
         return 1
     try:
-        blocking = blocking_findings(report, fetch_osv)
+        found = classified_findings(report, fetch_osv)
     except (urllib.error.URLError, json.JSONDecodeError, TimeoutError) as error:
         print(f"could not look up severity on OSV: {error}", file=sys.stderr)
         return 1
+    blocking = [finding for finding in found if finding.level in BLOCKING_LEVELS]
+    noted = [finding for finding in found if finding.level not in BLOCKING_LEVELS]
+    if noted:
+        print("low or moderate Python vulnerabilities (these do not fail CI):")
+        for finding in noted:
+            print(
+                f"  {finding.package} {finding.version} "
+                f"{finding.vuln_id} {finding.level}"
+            )
     if blocking:
         print("high or critical Python vulnerabilities:")
         for finding in blocking:

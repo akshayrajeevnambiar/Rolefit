@@ -2,6 +2,7 @@ import json
 
 from security.pip_audit_gate import (
     blocking_findings,
+    classified_findings,
     cvss_v3_base_score,
     level_from_osv,
 )
@@ -66,8 +67,10 @@ def test_high_finding_fails_and_moderate_does_not() -> None:
         ]
     }
 
+    classified = classified_findings(report, fetch)
     blocking = blocking_findings(report, fetch)
 
+    assert [item.level for item in classified] == ["HIGH", "MEDIUM"]
     assert [item.vuln_id for item in blocking] == ["PYSEC-high"]
     assert blocking[0].level == "HIGH"
 
