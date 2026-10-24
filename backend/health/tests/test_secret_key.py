@@ -11,12 +11,9 @@ def test_dev_secret_is_used_only_when_debug_is_on() -> None:
 
 
 def test_missing_or_dev_secret_refuses_to_boot_when_debug_is_off() -> None:
-    with pytest.raises(ImproperlyConfigured):
-        resolve_secret_key(debug=False, configured=None)
-    with pytest.raises(ImproperlyConfigured):
-        resolve_secret_key(debug=False, configured="")
-    with pytest.raises(ImproperlyConfigured):
-        resolve_secret_key(debug=False, configured=DEV_SECRET_KEY)
+    for configured in (None, "", "   ", DEV_SECRET_KEY, f"  {DEV_SECRET_KEY}  "):
+        with pytest.raises(ImproperlyConfigured):
+            resolve_secret_key(debug=False, configured=configured)
 
     assert (
         resolve_secret_key(debug=False, configured="unique-for-this-process")
