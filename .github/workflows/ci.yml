@@ -121,7 +121,24 @@ jobs:
         run: python -m pip install pip-audit==2.10.1
 
       - name: Audit Python dependencies
-        run: pip-audit -r backend/requirements.txt -r backend/requirements-dev.txt
+        # pip-audit exits 1 for every finding and has no severity flag.
+        # The gate fails this job for high, critical, or unknown severity.
+        # Low and moderate stay in the log and do not fail the job.
+        run: |
+          set +e
+          pip-audit -r backend/requirements.txt -r backend/requirements-dev.txt \
+            --format json --progress-spinner off --output "$RUNNER_TEMP/pip-audit.json"
+          status=$?
+          set -e
+          if [ "$status" -gt 1 ]; then
+            echo "pip-audit failed (exit $status)"
+            exit "$status"
+          fi
+          if [ ! -s "$RUNNER_TEMP/pip-audit.json" ]; then
+            echo "pip-audit did not write a report (exit $status)"
+            exit 1
+          fi
+          PYTHONPATH=backend python -m security.pip_audit_gate "$RUNNER_TEMP/pip-audit.json"
 
   npm-audit:
     name: npm dependency scan
@@ -144,4 +161,6 @@ jobs:
         run: npm ci
 
       - name: Audit npm dependencies
-        run: npm audit
+        # "high" is the lowest level that fails the job, so critical fails too.
+        # Low and moderate are printed and do not fail the job.
+        run: npm audit --audit-level=high
