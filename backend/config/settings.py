@@ -20,13 +20,18 @@ load_dotenv(BASE_DIR.parent / ".env")
 # once debug is off.
 DEV_SECRET_KEY = "dev-only-not-a-secret"
 
+# Django's security.W009. A shorter key is easier to guess, and this
+# process uses the key to sign sessions.
+MIN_SECRET_KEY_LENGTH = 50
+
 
 def resolve_secret_key(*, debug: bool, configured: str | None) -> str:
     """Return the signing key, or refuse to boot.
 
     The dev placeholder is allowed only while debug is on. Any other
     mode must be given its own key, including when the placeholder is
-    still set in the environment.
+    still set in the environment. That key must also be at least
+    50 characters, which is Django's own floor for SECRET_KEY.
     """
     secret = (configured or "").strip()
     if debug:
@@ -35,6 +40,11 @@ def resolve_secret_key(*, debug: bool, configured: str | None) -> str:
         raise ImproperlyConfigured(
             "DJANGO_SECRET_KEY must be a unique value when DJANGO_DEBUG "
             "is not true. The dev placeholder is public."
+        )
+    if len(secret) < MIN_SECRET_KEY_LENGTH:
+        raise ImproperlyConfigured(
+            "DJANGO_SECRET_KEY must be at least "
+            f"{MIN_SECRET_KEY_LENGTH} characters when DJANGO_DEBUG is not true."
         )
     return secret
 
