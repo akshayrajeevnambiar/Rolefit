@@ -20,13 +20,18 @@ load_dotenv(BASE_DIR.parent / ".env")
 # once debug is off.
 DEV_SECRET_KEY = "dev-only-not-a-secret"
 
+# Django's security.W009. A shorter key is easier to guess, and this
+# process uses the key to sign sessions.
+MIN_SECRET_KEY_LENGTH = 50
+
 
 def resolve_secret_key(*, debug: bool, configured: str | None) -> str:
     """Return the signing key, or refuse to boot.
 
     The dev placeholder is allowed only while debug is on. Any other
     mode must be given its own key, including when the placeholder is
-    still set in the environment.
+    still set in the environment. That key must also be at least
+    50 characters, which is Django's own floor for SECRET_KEY.
     """
     secret = (configured or "").strip()
     if debug:
@@ -35,6 +40,11 @@ def resolve_secret_key(*, debug: bool, configured: str | None) -> str:
         raise ImproperlyConfigured(
             "DJANGO_SECRET_KEY must be a unique value when DJANGO_DEBUG "
             "is not true. The dev placeholder is public."
+        )
+    if len(secret) < MIN_SECRET_KEY_LENGTH:
+        raise ImproperlyConfigured(
+            "DJANGO_SECRET_KEY must be at least "
+            f"{MIN_SECRET_KEY_LENGTH} characters when DJANGO_DEBUG is not true."
         )
     return secret
 
@@ -54,6 +64,7 @@ ALLOWED_HOSTS = [
 ]
 
 INSTALLED_APPS = [
+    "accounts",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -62,7 +73,11 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "health",
+    "library",
 ]
+
+# Email is the sign-in field. Set before the first migration.
+AUTH_USER_MODEL = "accounts.User"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -129,6 +144,16 @@ USE_TZ = True
 STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# The session cookie is the login. JavaScript cannot read it.
+# SameSite=Lax blocks it on a cross-site POST.
+# The CSRF cookie stays readable, which is Django's default, so the page
+# can copy it into X-CSRFToken. Secure stays off, also the default,
+# because this stack speaks plain HTTP on localhost. An HTTPS deploy
+# must set SESSION_COOKIE_SECURE and CSRF_COOKIE_SECURE.
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_SAMESITE = "Lax"
+
 REST_FRAMEWORK = {
     # JSON only. The browsable API stays off.
     "DEFAULT_RENDERER_CLASSES": [
@@ -146,4 +171,10 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.SessionAuthentication",
     ],
+    # 0: rate limits use the connection address, not X-Forwarded-For.
+    # A client can put anything in that header.
+    "NUM_PROXIES": 0,
+    "DEFAULT_THROTTLE_RATES": {
+        "auth": "5/min",
+    },
 }

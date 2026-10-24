@@ -15,7 +15,14 @@ def test_missing_or_dev_secret_refuses_to_boot_when_debug_is_off() -> None:
         with pytest.raises(ImproperlyConfigured):
             resolve_secret_key(debug=False, configured=configured)
 
-    assert (
-        resolve_secret_key(debug=False, configured="unique-for-this-process")
-        == "unique-for-this-process"
-    )
+
+def test_short_secret_refuses_to_boot_when_debug_is_off() -> None:
+    """Django's security.W009 asks for 50 characters. Match that floor."""
+    short = "k" * 49
+    with pytest.raises(ImproperlyConfigured, match="50"):
+        resolve_secret_key(debug=False, configured=short)
+
+    long_enough = "k" * 50
+    assert resolve_secret_key(debug=False, configured=long_enough) == long_enough
+    padded = f"  {long_enough}  "
+    assert resolve_secret_key(debug=False, configured=padded) == long_enough

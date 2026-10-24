@@ -6,7 +6,12 @@ src = ["."]
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP"]
 
+# Django writes the help text on one line. Wrapping it by hand would
+# fight the next makemigrations.
+[tool.ruff.lint.per-file-ignores]
+"**/migrations/*.py" = ["E501"]
+
 [tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE = "config.settings"
+DJANGO_SETTINGS_MODULE = "config.test_settings"
 pythonpath = ["."]
-testpaths = ["health", "security"]
+testpaths = ["health", "security", "accounts", "library"]
