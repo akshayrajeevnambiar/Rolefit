@@ -1,7 +1,31 @@
-# Local secrets. The committed template is .env.example.
+# Local secrets. .env* is ignored. The committed template is .env.example.
 .env
 .env.*
 !.env.example
+
+# Private keys and certificates.
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
+id_ecdsa
+id_ecdsa.pub
+
+# Database dumps. backend/docker/init-pgvector.sql is a schema script, not a dump.
+*.dump
+*.bak
+*.sql.gz
+*.sql.bz2
+*dump*.sql
+*.sqlite
+*.sqlite3
+*.db
 
 # Python
 .venv/
