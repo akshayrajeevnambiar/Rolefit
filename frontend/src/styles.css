@@ -1,0 +1,46 @@
+/*
+  Proof design tokens will live at design/tokens.css (repository root).
+  This scaffold does not depend on that file, because the design pull
+  request may not be merged yet. When it is on main, uncomment:
+
+  @import "../../design/tokens.css";
+
+  Vite is allowed to read this frontend directory and design/, not the
+  rest of the parent. See vite.config.ts.
+  Rules below use those custom properties and fall back to system colors,
+  so this file does not invent a second palette.
+*/
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-ui, system-ui, sans-serif);
+  background: var(--color-canvas, canvas);
+  color: var(--color-ink, canvastext);
+}
+
+main {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: var(--space-5, 2.5rem) var(--space-4, 1.5rem);
+}
+
+h1 {
+  margin: 0 0 var(--space-3, 1rem);
+  font-size: var(--font-size-sentence, 1.375rem);
+  font-weight: var(--weight-medium, 500);
+  letter-spacing: var(--tracking-word, normal);
+  line-height: var(--line-sentence, 1.3);
+}
+
+p {
+  margin: 0;
+  max-width: var(--measure, 65ch);
+  font-size: var(--font-size-body, 1rem);
+  line-height: var(--line-body, 1.5);
+  color: var(--color-secondary, inherit);
+}
