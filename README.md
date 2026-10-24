@@ -70,7 +70,9 @@ The frontend hooks need `npm ci` inside `frontend/` first.
 
 ## Design tokens
 
-The design system lands at `design/tokens.css`. This branch does not require that file. When it is on `main`, uncomment the `@import` at the top of `frontend/src/styles.css`. The page already reads those CSS variables and falls back to system colors until then.
+The placeholder page imports `design/tokens.css`. That file is the Proof palette and type: warm gray (`#f7f6f3`), Schibsted Grotesk for the interface, and IBM Plex Mono for the short “Local only” line. The font files are in `design/fonts/` and are loaded from `frontend/src/styles.css`.
+
+In the frontend image the app lives at `/app`, so the import `../../design/tokens.css` is the path `/design/tokens.css`. Compose mounts `design/` there, read-only.
 
 ## What is not here yet
 
