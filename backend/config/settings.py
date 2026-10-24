@@ -64,6 +64,7 @@ ALLOWED_HOSTS = [
 ]
 
 INSTALLED_APPS = [
+    "accounts",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -73,6 +74,9 @@ INSTALLED_APPS = [
     "rest_framework",
     "health",
 ]
+
+# Email is the sign-in field. Set before the first migration.
+AUTH_USER_MODEL = "accounts.User"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -139,6 +143,18 @@ USE_TZ = True
 STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# The session cookie is the login. JavaScript cannot read it.
+# The CSRF cookie is readable so the browser can copy it into X-CSRFToken.
+# SameSite=Lax blocks it on a cross-site POST. Secure stays off because
+# this stack speaks plain HTTP on localhost. An HTTPS deploy must turn
+# both Secure flags on.
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = "Lax"
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_HTTPONLY = False
+CSRF_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_SECURE = False
+
 REST_FRAMEWORK = {
     # JSON only. The browsable API stays off.
     "DEFAULT_RENDERER_CLASSES": [
@@ -156,4 +172,10 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.SessionAuthentication",
     ],
+    # 0: rate limits use the connection address, not X-Forwarded-For.
+    # A client can put anything in that header.
+    "NUM_PROXIES": 0,
+    "DEFAULT_THROTTLE_RATES": {
+        "auth": "5/min",
+    },
 }
