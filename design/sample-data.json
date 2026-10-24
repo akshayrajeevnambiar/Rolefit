@@ -1,0 +1,104 @@
+{
+  "note": "Fictional postings written for the mockups. Not copied from real employers. Counts in the mockups match this file. Postgres is stored as PostgreSQL.",
+  "resume": ["Git", "REST APIs", "SQL", "JavaScript", "Unit Testing", "Agile/Scrum", "Android", "Java", "Kotlin"],
+  "categories": {
+    "Python": "Language",
+    "TypeScript": "Language",
+    "JavaScript": "Language",
+    "React": "Library",
+    "Django": "Library",
+    "PostgreSQL": "Data",
+    "SQL": "Data",
+    "Git": "Tool",
+    "Docker": "Tool",
+    "REST APIs": "Practice",
+    "CI/CD": "Practice",
+    "Unit Testing": "Practice",
+    "Code Review": "Practice",
+    "Agile/Scrum": "Practice"
+  },
+  "descriptions": [
+    {
+      "id": "northwind",
+      "company": "Northwind Health",
+      "role": "Full-stack engineer",
+      "skills": [
+        {"name": "Python", "level": "required"},
+        {"name": "Django", "level": "required"},
+        {"name": "PostgreSQL", "level": "required"},
+        {"name": "React", "level": "required"},
+        {"name": "TypeScript", "level": "nice"},
+        {"name": "Git", "level": "required"},
+        {"name": "REST APIs", "level": "required"}
+      ]
+    },
+    {
+      "id": "harbor",
+      "company": "Harbor Payments",
+      "role": "Backend engineer",
+      "alias": {"Postgres": "PostgreSQL"},
+      "skills": [
+        {"name": "Python", "level": "required"},
+        {"name": "SQL", "level": "required"},
+        {"name": "PostgreSQL", "level": "required", "sourceWord": "Postgres"},
+        {"name": "Docker", "level": "required"},
+        {"name": "CI/CD", "level": "required"},
+        {"name": "Git", "level": "required"},
+        {"name": "Unit Testing", "level": "nice"}
+      ]
+    },
+    {
+      "id": "lumen",
+      "company": "Lumen Field",
+      "role": "Product engineer",
+      "skills": [
+        {"name": "React", "level": "required"},
+        {"name": "TypeScript", "level": "required"},
+        {"name": "REST APIs", "level": "required"},
+        {"name": "Git", "level": "required"},
+        {"name": "JavaScript", "level": "required"},
+        {"name": "Code Review", "level": "nice"}
+      ]
+    },
+    {
+      "id": "keel",
+      "company": "Keel Systems",
+      "role": "Platform engineer",
+      "skills": [
+        {"name": "Docker", "level": "required"},
+        {"name": "CI/CD", "level": "required"},
+        {"name": "Python", "level": "required"},
+        {"name": "PostgreSQL", "level": "nice"},
+        {"name": "Git", "level": "required"},
+        {"name": "SQL", "level": "required"}
+      ]
+    },
+    {
+      "id": "atlas",
+      "company": "Atlas Civic",
+      "role": "Software engineer",
+      "skills": [
+        {"name": "Python", "level": "required"},
+        {"name": "Django", "level": "required"},
+        {"name": "React", "level": "required"},
+        {"name": "SQL", "level": "required"},
+        {"name": "Unit Testing", "level": "required"},
+        {"name": "PostgreSQL", "level": "nice"},
+        {"name": "Agile/Scrum", "level": "required"}
+      ]
+    },
+    {
+      "id": "sable",
+      "company": "Sable & Co.",
+      "role": "Application engineer",
+      "skills": [
+        {"name": "TypeScript", "level": "required"},
+        {"name": "React", "level": "required"},
+        {"name": "REST APIs", "level": "required"},
+        {"name": "PostgreSQL", "level": "required"},
+        {"name": "Code Review", "level": "required"},
+        {"name": "JavaScript", "level": "nice"}
+      ]
+    }
+  ]
+}

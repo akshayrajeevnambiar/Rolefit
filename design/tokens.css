@@ -1,0 +1,79 @@
+/*
+  RoleFit tokens. Name of the system: Proof.
+
+  The frontend imports this file. Do not add a second palette in component code.
+  Fonts are named here. Files live in design/fonts/ and are licensed under the SIL OFL.
+*/
+
+:root {
+  --font-ui: "Schibsted Grotesk", "Liberation Sans", sans-serif;
+  --font-mono: "IBM Plex Mono", "Liberation Mono", monospace;
+
+  --font-size-sentence: 22px;
+  --line-sentence: 28px;
+  --font-size-title: 18px;
+  --line-title: 24px;
+  --font-size-body: 15px;
+  --line-body: 24px;
+  --font-size-ui: 13px;
+  --line-ui: 20px;
+  --font-size-document: 14px;
+  --line-document: 22px;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-bold: 600;
+
+  --tracking-word: -0.02em;
+  --tracking-sentence: -0.015em;
+
+  /* Ground is warm gray. White is for the source text, fields, and the selected row. */
+  --color-canvas: #f7f6f3;
+  --color-surface: #ffffff;
+  --color-ink: #141513;
+  --color-secondary: #454940;
+  --color-line: #dddbd4;
+  --color-line-strong: #84827a;
+  --color-mark: #d7e86c;
+  --color-gap: #6f2b22;
+  --color-have: #174833;
+  --color-skeleton: #b0aea6;
+  --color-on-ink: #ffffff;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 40px;
+  --space-6: 64px;
+
+  --radius-control: 2px;
+
+  --control-height: 40px;
+  --button-height: 36px;
+  --topbar-height: 52px;
+  --bar-height: 4px;
+  --bar-width: 64px;
+  --focus-width: 2px;
+  --rule: 1px;
+
+  --duration-fast: 120ms;
+  --duration-skeleton: 1200ms;
+  --ease-standard: linear;
+
+  --bp-mobile: 360px;
+  --bp-tablet: 768px;
+  --bp-columns: 1100px;
+  --bp-desktop: 1280px;
+
+  --index-width: 280px;
+  --rail-width: 300px;
+  --measure: 68ch;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-skeleton: 0ms;
+  }
+}
