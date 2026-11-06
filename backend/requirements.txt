@@ -2,5 +2,5 @@
 # Exact pins keep Docker, CI, and pip-audit on the same set.
 Django==5.2.18
 djangorestframework==3.18.3
-psycopg[binary]==3.3.6
+psycopg[binary]==3.3.7
 python-dotenv==1.2.4
